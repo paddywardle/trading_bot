@@ -10,6 +10,6 @@ class AlpacaKeys:
     secret_key:str
 
     def __init__(self) -> None:
-        load_dotenv(os.path.join(os.path.dirname(__file__), '../..', 'config', '.env'))
+        load_dotenv("config/.env")
         self.api_key = os.getenv("ALPACA_API_KEY")
         self.secret_key = os.getenv("ALPACA_SECRET")

@@ -1,13 +1,13 @@
-from src.trading.TradingClient import Trader
-from src.trading.MarketOrder import MarketOrder
-# from src.scheduler.Schedule import Schedule
+from trading.AlpacaKeys import AlpacaKeys
 
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest
 
 if __name__ == "__main__":
 
-    trader = Trader()
+    # trader = Trader()
+    keys = AlpacaKeys()
+    print(keys)
     # trader.authenticate()
 
     # market_order = MarketOrder(
