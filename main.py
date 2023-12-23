@@ -1,13 +1,15 @@
 from trading.AlpacaKeys import AlpacaKeys
 
+from src.Opportunities.Opportunities import Opportunities
+from src.Opportunities.OpportunitiesURL import OpportunitiesURL
+
+
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest
 
 if __name__ == "__main__":
 
     # trader = Trader()
-    keys = AlpacaKeys()
-    print(keys)
     # trader.authenticate()
 
     # market_order = MarketOrder(
@@ -19,4 +21,8 @@ if __name__ == "__main__":
 
     # trader.submit_order(market_order)
 
+    opportunity = OpportunitiesURL(sec_type="crypto", sec_num=200)
+    opportunities = Opportunities().get_opportunities(opportunity)
+
+    print(opportunities)
 

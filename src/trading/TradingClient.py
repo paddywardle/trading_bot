@@ -5,6 +5,8 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetAssetsRequest
 from alpaca.trading.enums import AssetClass
 from alpaca.trading.models import TradeAccount
+from alpaca.trading.requests import CancelOrderResponse
+from alpaca.trading.models import Position
 
 class Trader:
 
@@ -27,6 +29,14 @@ class Trader:
             return self.trading_client.get_all_assets(search_params)
         return self.trading_client.get_all_assets()
     
+    def get_all_positions(self) -> list[Position]:
+
+        return self.trading_client.get_all_positions()
+    
     def submit_order(self, market_order:MarketOrder=None) -> None:
 
         self.trading_client.submit_order(order_data=market_order)
+
+    def cancel_order(self) -> list[CancelOrderResponse]:
+
+        return self.trading_client.cancel_orders()
