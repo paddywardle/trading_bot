@@ -8,7 +8,7 @@ class Opportunities:
 
     def __init__(self) -> None:
 
-        pass
+        self.opportunities = self.opportunities()
 
     def get_raw_info(self, url:str=None):
 
