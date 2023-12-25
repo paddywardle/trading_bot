@@ -6,10 +6,10 @@ import pandas as pd
 
 class Opportunities:
 
-    def __init__(self) -> None:
+    def __init__(self, opportunity:OpportunitiesURL=None) -> None:
 
-        self.opportunities = self.opportunities()
-
+        self.opportunities = self.get_opportunities(opportunity=opportunity)
+        
     def get_raw_info(self, url:str=None):
 
         http_request = HTTPRequests()

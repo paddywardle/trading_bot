@@ -2,6 +2,7 @@ from trading.AlpacaKeys import AlpacaKeys
 
 from src.Opportunities.Opportunities import Opportunities
 from src.Opportunities.OpportunitiesURL import OpportunitiesURL
+from src.Opportunities.Opportunity import Opportunity
 
 
 from alpaca.trading.enums import OrderSide, TimeInForce
@@ -21,8 +22,9 @@ if __name__ == "__main__":
 
     # trader.submit_order(market_order)
 
-    opportunity = OpportunitiesURL(sec_type="crypto", sec_num=200)
-    opportunities = Opportunities().get_opportunities(opportunity)
-
-    print(opportunities)
-
+    opportunity = OpportunitiesURL(sec_type="stocks", sec_num=200)
+    # print(opportunity.build_url())
+    opportunities = Opportunities(opportunity)
+    # print(opportunities.opportunities["Symbol"][0])
+    op_stat = Opportunity(symbol=opportunities.opportunities["Symbol"][0])
+    print(op_stat.ticker_history)
