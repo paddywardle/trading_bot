@@ -1,5 +1,5 @@
 from src.Opportunities.Opportunities import Opportunities
-from src.Opportunities.Opportunity import Opportunity
+from src.TechnicalIndicators.TechnicalIndicators import TechnicalIndicators
 
 import yfinance as yf
 
@@ -16,5 +16,5 @@ class OpportunitiesStats:
     def get_all_stats(self):
 
         for i, symbol in enumerate(self.tickers):
-            opportunity = Opportunity(symbol=symbol)
+            opportunity = TechnicalIndicators(symbol=symbol)
         

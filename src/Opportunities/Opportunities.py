@@ -8,21 +8,18 @@ class Opportunities:
 
     def __init__(self, opportunity:OpportunitiesURL=None) -> None:
 
+        self.http_request = HTTPRequests()
         self.opportunities = self.get_opportunities(opportunity=opportunity)
-        
+
     def get_raw_info(self, url:str=None):
 
-        http_request = HTTPRequests()
-
-        response = http_request.get(url)
+        response = self.http_request.get(url)
 
         tables = pd.read_html(response.html.raw_html)
 
         df_raw = tables[0].copy()
 
         df_raw.columns = tables[0].columns
-
-        http_request.close_session()
 
         return df_raw
     
@@ -42,6 +39,9 @@ class Opportunities:
             df_historical.append(df_raw)
             offset += 100
 
+
+        self.http_request.close_session()
+        
         df_historical = pd.concat(df_historical)
         df_historical["asset_type"] = opportunity.sec_type
 

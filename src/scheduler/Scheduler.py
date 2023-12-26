@@ -17,7 +17,7 @@ class Scheduler:
                                hour=self.schedule.hour, 
                                minute=self.schedule.minute, 
                                start_date=self.schedule.start_date, 
-                               timezone=self.schedule.timezone
+                               timezone=self.schedule.timezone,
                             )
         
     def start_job(self) -> None:

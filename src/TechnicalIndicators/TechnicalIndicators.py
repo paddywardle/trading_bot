@@ -4,7 +4,7 @@ from ta.volatility import BollingerBands
 from ta.momentum import RSIIndicator
 from ta.trend import sma_indicator
 
-class Opportunity:
+class TechnicalIndicators:
 
     def __init__(self, symbol:str=None, period:str="1y", interval:str="1d", windows:list[int]=[14,30,50,200]) -> None:
 
@@ -46,5 +46,9 @@ class Opportunity:
             self.ticker_history.reset_index(drop=True, inplace=True)
         except KeyError:
             pass
+
+    # def returns(self, days:int=None) -> None:
+        
+    #     self.ticker_history[str(days) + "_returns"] = 
 
 
