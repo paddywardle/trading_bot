@@ -1,5 +1,5 @@
-from src.trading.AlpacaKeys import AlpacaKeys
-from src.trading.MarketOrder import MarketOrder
+from src.alpaca_interaction.AlpacaKeys import AlpacaKeys
+from src.alpaca_interaction.MarketOrder import MarketOrder
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetAssetsRequest

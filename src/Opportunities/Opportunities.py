@@ -1,5 +1,5 @@
 from src.requests.HTTPRequests import HTTPRequests
-from src.Opportunities.OpportunitiesURL import OpportunitiesURL
+from src.opportunities.OpportunitiesURL import OpportunitiesURL
 
 import yfinance as yf
 import pandas as pd

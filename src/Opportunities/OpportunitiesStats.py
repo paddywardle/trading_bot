@@ -1,5 +1,6 @@
-from src.Opportunities.Opportunities import Opportunities
-from src.TechnicalIndicators.TechnicalIndicators import TechnicalIndicators
+from src.opportunities.Opportunities import OpportunitiesURL
+from src.opportunities.Opportunities import Opportunities
+from src.indicators.TechnicalIndicators import TechnicalIndicators
 
 import yfinance as yf
 
