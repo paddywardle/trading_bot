@@ -1,4 +1,4 @@
-from trading.AlpacaKeys import AlpacaKeys
+from alpaca_interaction.AlpacaKeys import AlpacaKeys
 
 def test_check_key_types():
     keys = AlpacaKeys()

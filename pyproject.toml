@@ -17,5 +17,8 @@ classifiers = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build]
+src-layout = true  # Enable the src layout
+
 [tool.hatch.build.targets.wheel]
-packages = ["src/alpaca_interaction", "src/indicators", "src/opportunities", "src/scheduler", "src/strategies", "src/trading"]  # Adjust this to your project structure
+packages = ["src/alpaca_interaction", "src/indicators", "src/opportunities", "src/positions", "src/scheduler", "src/strategies", "src/trading"]  # Adjust this to your project structure
