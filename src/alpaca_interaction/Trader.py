@@ -16,7 +16,6 @@ class Trader:
         self.trading_client = None
 
     def authenticate(self) -> None:
-
         self.trading_client = TradingClient(api_key=self.alpaca_keys.api_key, secret_key=self.alpaca_keys.secret_key, paper=self.paper)
 
     def get_account(self) -> TradeAccount:

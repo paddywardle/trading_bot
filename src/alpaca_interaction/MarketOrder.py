@@ -7,12 +7,12 @@ class MarketOrder:
                  stock: str=None,
                  quantity: float=None,
                  buy_or_sell: str=None,
-                 time_in_force: TimeInForce=None) -> None:
+                 time_in_force: TimeInForce=TimeInForce.DAY) -> None:
         
         self.stock = stock
         self.quantity = quantity
         self.buy_or_sell = OrderSide.BUY if (buy_or_sell=="buy") else OrderSide.SELL
-        self.time_in_force = time_in_force or TimeInForce.DAY
+        self.time_in_force = time_in_force
 
     def create_market_order(self) -> MarketOrderRequest:
 

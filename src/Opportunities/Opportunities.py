@@ -11,6 +11,14 @@ class Opportunities:
         self.http_request = HTTPRequests()
         self.opportunities = self.get_opportunities(opportunity=opportunity)
 
+    def __iter__(self):
+
+        return self.opportunities.iterrows()
+    
+    def __len__(self):
+
+        return len(self.opportunities)
+
     def get_raw_info(self, url:str=None):
 
         response = self.http_request.get(url)
