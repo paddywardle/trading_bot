@@ -1,8 +1,5 @@
-from src.opportunities.Opportunities import OpportunitiesURL
 from src.opportunities.Opportunities import Opportunities
 from src.indicators.TechnicalIndicators import TechnicalIndicators
-
-import yfinance as yf
 
 # This class calculates stats for the days opportunities - individual methods which are called in a get_stats method
 # Should I have an individual class that has the concept of an Opportunity, which can have stats calculated for it, then OpportunitiesStats calculates it for all of them?

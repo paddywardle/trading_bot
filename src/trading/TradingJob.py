@@ -19,7 +19,6 @@ from alpaca.trading.models import Position
 class TradingJob:
 
     def __init__(self, buy_job:callable=None, sell_job:callable=None, buy_signal:callable=None, sell_signal:callable=None) -> None:
-
         self.strategy = Strategy(buy_signal=buy_signal, sell_signal=sell_signal)
         self.buy_job = buy_job or self.default_buy_job
         self.sell_job = sell_job or self.default_sell_job
@@ -27,8 +26,9 @@ class TradingJob:
     def default_buy_job(self, opportunities:Opportunities=None) -> None:
 
         market = Market()
-        
+
         if market.is_market_open():
+
             for i, row in opportunities:
                 self.default_buy_it(row)
         else:
@@ -44,8 +44,9 @@ class TradingJob:
         close_prev = op_stats.ticker_history["Close"].iloc[0]
 
         buy_bool = self.strategy.buy_signal(open=open_cur, close=close_cur, previous_open=open_prev, previous_close=close_prev)
-
+        
         if buy_bool:
+            print("Buying ", opportunity["Symbol"])
             mo = MarketOrder(stock=opportunity["Symbol"], quantity=1, buy_or_sell="buy").create_market_order()
             submit = Trader().submit_order(market_order=mo)
 
@@ -73,12 +74,7 @@ class TradingJob:
 
         sell_bool = self.strategy.sell_signal(open=open_cur, close=close_cur, previous_open=open_prev, previous_close=close_prev)
 
-        print(sell_bool)
-
-        # if sell_bool:
-        #     mo = MarketOrder(stock=position.symbol, quantity=position.qty, buy_or_sell="sell").create_market_order()
-        #     submit = Trader().submit_order(market_order=mo)
-
-
-            
-
+        if sell_bool:
+            print("Selling ", position.symbol)
+            mo = MarketOrder(stock=position.symbol, quantity=position.qty, buy_or_sell="sell").create_market_order()
+            submit = Trader().submit_order(market_order=mo)
