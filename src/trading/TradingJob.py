@@ -28,22 +28,19 @@ class TradingJob:
         market = Market()
 
         if market.is_market_open():
-
             for i, row in opportunities:
-                self.default_buy_it(row)
+                num = self.default_buy_it(row)
         else:
             print(f"{market.market_location} is not open")
 
     def default_buy_it(self, opportunity:pd.Series=None) -> None:
 
-        op_stats = TechnicalIndicators(symbol=opportunity["Symbol"], period="2d", calc_stats=False)
+        op_stats = TechnicalIndicators(symbol=opportunity["Symbol"], period="1y")
+        
+        sma = op_stats.ticker_history["sma14"].iloc[-1]
+        close = op_stats.ticker_history["Close"].iloc[-1]
 
-        open_cur = op_stats.ticker_history["Open"].iloc[1]
-        close_cur = op_stats.ticker_history["Close"].iloc[1]
-        open_prev = op_stats.ticker_history["Open"].iloc[0]
-        close_prev = op_stats.ticker_history["Close"].iloc[0]
-
-        buy_bool = self.strategy.buy_signal(open=open_cur, close=close_cur, previous_open=open_prev, previous_close=close_prev)
+        buy_bool = self.strategy.buy_signal(sma=sma, prev_close=close)
         
         if buy_bool:
             print("Buying ", opportunity["Symbol"])
@@ -54,7 +51,7 @@ class TradingJob:
 
         market = Market()
         
-        if market.is_market_open():
+        if not market.is_market_open():
             positions = Positions()
         
             for i, pos in enumerate(positions):
@@ -65,14 +62,12 @@ class TradingJob:
 
     def default_sell_it(self, position:Position=None) -> None:
 
-        op_stats = TechnicalIndicators(symbol=position.symbol, period="2d", calc_stats=False)
+        op_stats = TechnicalIndicators(symbol=position.symbol, period="1y")
 
-        open_cur = op_stats.ticker_history["Open"].iloc[1]
-        close_cur = op_stats.ticker_history["Close"].iloc[1]
-        open_prev = op_stats.ticker_history["Open"].iloc[0]
-        close_prev = op_stats.ticker_history["Close"].iloc[0]
+        sma = op_stats.ticker_history["sma14"].iloc[-1]
+        close = op_stats.ticker_history["Close"].iloc[-1]
 
-        sell_bool = self.strategy.sell_signal(open=open_cur, close=close_cur, previous_open=open_prev, previous_close=close_prev)
+        sell_bool = self.strategy.sell_signal(sma=sma, prev_close=close)
 
         if sell_bool:
             print("Selling ", position.symbol)
