@@ -51,14 +51,13 @@ class TradingJob:
 
         market = Market()
         
-        if not market.is_market_open():
+        if market.is_market_open():
             positions = Positions()
         
             for i, pos in enumerate(positions):
                 self.default_sell_it(pos)
         else:
             print(f"{market.market_location} is not open")
-
 
     def default_sell_it(self, position:Position=None) -> None:
 
