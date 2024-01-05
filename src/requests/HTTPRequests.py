@@ -29,10 +29,11 @@ class HTTPRequests():
         except:
             print("Other error")
 
-    def post(self, url: str, **kwargs) -> req.Response:
+    @staticmethod
+    def post(url: str, **kwargs) -> req.Response:
 
         try:
-            response = self.session.post(url, **kwargs)
+            response = req.post(url, **kwargs)
             response.raise_for_status()
             return response
         except req.exceptions.HTTPError as errh:

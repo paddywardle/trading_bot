@@ -21,4 +21,4 @@ build-backend = "hatchling.build"
 src-layout = true  # Enable the src layout
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/alpaca_interaction", "src/indicators", "src/opportunities", "src/positions", "src/scheduler", "src/strategies", "src/trading"]  # Adjust this to your project structure
+packages = ["src/alpaca_interaction", "src/indicators", "src/notification", "src/opportunities", "src/positions", "src/scheduler", "src/strategies", "src/trading"]  # Adjust this to your project structure

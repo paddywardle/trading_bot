@@ -13,6 +13,8 @@ from src.indicators.TechnicalIndicators import TechnicalIndicators
 
 from src.positions.Positions import Positions
 
+from src.notification.SlackClient import SlackClient
+
 import pandas as pd
 from alpaca.trading.models import Position
 import alpaca
@@ -24,6 +26,7 @@ class TradingJob:
         self.strategy = Strategy(buy_signal=buy_signal, sell_signal=sell_signal)
         self.buy_job = buy_job or self.default_buy_job
         self.sell_job = sell_job or self.default_sell_job
+        self.slack_client = SlackClient()
         self.trader = Trader()
         self.trader.authenticate()
 
@@ -35,7 +38,7 @@ class TradingJob:
             for i, row in opportunities:
                 self.default_buy_it(row)
         else:
-            print(f"{market.market_location} is not open")
+            self.slack_client.send_message(f"{market.market_location} is not open")
 
     def default_buy_it(self, opportunity:pd.Series=None) -> None:
 
@@ -48,11 +51,12 @@ class TradingJob:
         
         if buy_bool:
             try:
-                print("Buying ", opportunity["Symbol"])
-                mo = MarketOrder(stock=opportunity["Symbol"], quantity=1, buy_or_sell="buy").create_market_order()
+                qty = 1
+                mo = MarketOrder(stock=opportunity["Symbol"], quantity=qty, buy_or_sell="buy").create_market_order()
                 submit = self.trader.submit_order(market_order=mo)
+                self.slack_client.send_message(f"Bought: {opportunity['Symbol']}, Quantity: {qty}")
             except (requests.exceptions.HTTPError,alpaca.common.exceptions.APIError):
-                print(f"{opportunity['Symbol']} not active")
+                self.slack_client.send_message(f"{opportunity['Symbol']} not active")
 
     def default_sell_job(self):
 
@@ -64,7 +68,7 @@ class TradingJob:
             for i, pos in enumerate(positions):
                 self.default_sell_it(pos)
         else:
-            print(f"{market.market_location} is not open")
+            self.slack_client.send_message(f"{market.market_location} is not open")
 
     def default_sell_it(self, position:Position=None) -> None:
 
@@ -76,6 +80,6 @@ class TradingJob:
         sell_bool = self.strategy.sell_signal(sma=sma, prev_close=close)
 
         if sell_bool:
-            print("Selling ", position.symbol)
             mo = MarketOrder(stock=position.symbol, quantity=position.qty, buy_or_sell="sell").create_market_order()
             submit = self.trader.submit_order(market_order=mo)
+            self.slack_client.send_message(f"Sold: {position.symbol}, Quantity: {position.qty}")
