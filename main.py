@@ -13,8 +13,9 @@ if __name__ == "__main__":
     trading_job = TradingJob()
 
     while True:
-
+        print("\nBuying\n")
         trading_job.buy_job(opportunities=opportunties)
+        print("\nSelling\n")
         trading_job.sell_job()
 
         time.sleep(60)

@@ -15,6 +15,8 @@ from src.positions.Positions import Positions
 
 import pandas as pd
 from alpaca.trading.models import Position
+import alpaca
+import requests
 
 class TradingJob:
 
@@ -22,6 +24,8 @@ class TradingJob:
         self.strategy = Strategy(buy_signal=buy_signal, sell_signal=sell_signal)
         self.buy_job = buy_job or self.default_buy_job
         self.sell_job = sell_job or self.default_sell_job
+        self.trader = Trader()
+        self.trader.authenticate()
 
     def default_buy_job(self, opportunities:Opportunities=None) -> None:
 
@@ -29,7 +33,7 @@ class TradingJob:
 
         if market.is_market_open():
             for i, row in opportunities:
-                num = self.default_buy_it(row)
+                self.default_buy_it(row)
         else:
             print(f"{market.market_location} is not open")
 
@@ -43,9 +47,12 @@ class TradingJob:
         buy_bool = self.strategy.buy_signal(sma=sma, prev_close=close)
         
         if buy_bool:
-            print("Buying ", opportunity["Symbol"])
-            mo = MarketOrder(stock=opportunity["Symbol"], quantity=1, buy_or_sell="buy").create_market_order()
-            submit = Trader().submit_order(market_order=mo)
+            try:
+                print("Buying ", opportunity["Symbol"])
+                mo = MarketOrder(stock=opportunity["Symbol"], quantity=1, buy_or_sell="buy").create_market_order()
+                submit = self.trader.submit_order(market_order=mo)
+            except (requests.exceptions.HTTPError,alpaca.common.exceptions.APIError):
+                print(f"{opportunity['Symbol']} not active")
 
     def default_sell_job(self):
 
@@ -71,4 +78,4 @@ class TradingJob:
         if sell_bool:
             print("Selling ", position.symbol)
             mo = MarketOrder(stock=position.symbol, quantity=position.qty, buy_or_sell="sell").create_market_order()
-            submit = Trader().submit_order(market_order=mo)
+            submit = self.trader.submit_order(market_order=mo)
