@@ -1,4 +1,3 @@
-from src.alpaca_interaction.AlpacaKeys import AlpacaKeys
 from src.alpaca_interaction.MarketOrder import MarketOrder
 from src.alpaca_interaction.Trader import Trader
 from src.alpaca_interaction.Market import Market
@@ -6,8 +5,6 @@ from src.alpaca_interaction.Market import Market
 from src.strategies.Strategy import Strategy
 
 from src.opportunities.Opportunities import Opportunities
-from src.opportunities.OpportunitiesStats import OpportunitiesStats
-from src.opportunities.OpportunitiesURL import OpportunitiesURL
 from src.opportunities.OpportunityTickers import OpportunityTickers
 
 from src.indicators.TechnicalIndicators import TechnicalIndicators
