@@ -17,6 +17,10 @@ class HTTPRequests():
             response = await self.session.get(url, **kwargs)
             response.raise_for_status()
             return response
+    
+    def async_run(self):
+
+        asyncio.run(self.get())
 
     def put(self, url: str, **kwargs) -> req.Response:
 

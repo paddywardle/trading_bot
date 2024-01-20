@@ -1,3 +1,5 @@
+from src.opportunities.OpportunityTickers import OpportunityTickers
+
 import yfinance as yf
 import pandas as pd
 from ta.volatility import BollingerBands
@@ -6,51 +8,43 @@ from ta.trend import sma_indicator
 
 class TechnicalIndicators:
 
-    def __init__(self, symbol:str=None, period:str="1y", interval:str="1d", windows:list[int]=None, calc_stats:bool=True) -> None:
+    def __init__(self, windows:list[int]=None) -> None:
 
-        self.symbol = symbol
-        self.period = period
-        self.interval = interval
-        self.ticker = yf.Ticker(ticker=self.symbol)
-        self.ticker_history = self.get_ticker_history()
-        
-        if calc_stats:
-            self.get_stats(windows=windows or [14,30,50,200])
-
-    def get_ticker_history(self) -> pd.DataFrame:
-
-        return self.ticker.history(period=self.period, interval=self.interval)
+        self.windows = windows or [14,30,50,200]
     
-    def get_sma(self, window:int=None) -> None:
+    def get_sma(self, opportunity_tickers:pd.DataFrame=None, window:int=None) -> pd.DataFrame:
 
-        self.ticker_history["sma" + str(window)] = sma_indicator(close=self.ticker_history["Close"], window=window, fillna=False)
+        opportunity_tickers["sma" + str(window)] = sma_indicator(close=opportunity_tickers["Close"], window=window, fillna=False)
 
-    def get_rsi(self, window:int=None) -> None:
+        return opportunity_tickers
 
-        self.ticker_history["rsi" + str(window)] = RSIIndicator(close=self.ticker_history["Close"], window=window).rsi()
+    def get_rsi(self, opportunity_tickers:pd.DataFrame=None, window:int=None) -> pd.DataFrame:
 
-    def get_bb(self, window:int=None, window_dev:int=None) -> None:
+        opportunity_tickers["rsi" + str(window)] = RSIIndicator(close=opportunity_tickers["Close"], window=window).rsi()
+        
+        return opportunity_tickers
 
-        bollinger = BollingerBands(close=self.ticker_history["Close"], window=window, window_dev=window_dev)
+    def get_bb(self, opportunity_tickers:pd.DataFrame=None, window:int=None, window_dev:int=None) -> pd.DataFrame:
 
-        self.ticker_history["bbhi" + str(window)] = bollinger.bollinger_hband_indicator()
-        self.ticker_history["bblo" + str(window)] = bollinger.bollinger_lband_indicator()
+        bollinger = BollingerBands(close=opportunity_tickers["Close"], window=window, window_dev=window_dev)
 
-    def get_stats(self, windows:list[int]) -> None:
+        opportunity_tickers["bbhi" + str(window)] = bollinger.bollinger_hband_indicator()
+        opportunity_tickers["bblo" + str(window)] = bollinger.bollinger_lband_indicator()
+        
+        return opportunity_tickers
+
+    def get_stats(self, opportunity_tickers:pd.DataFrame=None) -> pd.DataFrame:
 
         try:
-            for window in windows:
+            for window in self.windows:
 
-                self.get_sma(window=window)
-                self.get_rsi(window=window)
-                self.get_bb(window=window, window_dev=2)
+                self.get_sma(opportunity_tickers=opportunity_tickers, window=window)
+                self.get_rsi(opportunity_tickers=opportunity_tickers, window=window)
+                self.get_bb(opportunity_tickers=opportunity_tickers, window=window, window_dev=2)
 
-            self.ticker_history.reset_index(drop=True, inplace=True)
+            opportunity_tickers.reset_index(drop=True, inplace=True)
+
+            return opportunity_tickers
+        
         except KeyError:
             pass
-
-    # def returns(self, days:int=None) -> None:
-        
-    #     self.ticker_history[str(days) + "_returns"] = 
-
-
