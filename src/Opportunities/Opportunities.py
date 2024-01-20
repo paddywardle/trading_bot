@@ -47,7 +47,6 @@ class Opportunities:
             df_historical.append(df_raw)
             offset += 100
 
-
         self.http_request.close_session()
         
         df_historical = pd.concat(df_historical)

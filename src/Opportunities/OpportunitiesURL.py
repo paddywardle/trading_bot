@@ -7,12 +7,14 @@ class OpportunitiesURL:
     sec_num:str
     url:str=f"https://finance.yahoo.com/"
 
-    def build_url(self) -> str:
-
+    def __post_init__(self):
+        
         if self.sec_type.lower() == "stocks":
             self.url += "losers?"
         if self.sec_type.lower() == "crypto":
             self.url += "crypto?"
+
+    def build_url(self) -> str:
 
         if self.sec_num < 100:
             self.url += "count={self.sec_num}"

@@ -1,16 +1,22 @@
 import requests_html as req_html
 import requests as req
+import httpx
+import asyncio
 
 class HTTPRequests():
 
     def __init__(self):
-        self.session = req_html.HTMLSession()
+        self.session = httpx.AsyncClient()
 
-    def get(self, url: str, **kwargs) -> req.Response:
+    def __del__(self):
+        self.close_session()
 
-        response = self.session.get(url, **kwargs)
-        response.raise_for_status()
-        return response
+    async def get(self, url: str, **kwargs) -> req.Response:
+
+        async with self.session as client:
+            response = await self.session.get(url, **kwargs)
+            response.raise_for_status()
+            return response
 
     def put(self, url: str, **kwargs) -> req.Response:
 
@@ -49,4 +55,4 @@ class HTTPRequests():
 
     def close_session(self) -> None:
 
-        self.session.close()
+        self.session.aclose()
