@@ -6,7 +6,7 @@ from ta.trend import sma_indicator
 
 class TechnicalIndicators:
 
-    def __init__(self, symbol:str=None, period:str="1y", interval:str="1d", windows:list[int]=[14,30,50,200], calc_stats:bool=True) -> None:
+    def __init__(self, symbol:str=None, period:str="1y", interval:str="1d", windows:list[int]=None, calc_stats:bool=True) -> None:
 
         self.symbol = symbol
         self.period = period
@@ -15,7 +15,7 @@ class TechnicalIndicators:
         self.ticker_history = self.get_ticker_history()
         
         if calc_stats:
-            self.get_stats(windows=windows)
+            self.get_stats(windows=windows or [14,30,50,200])
 
     def get_ticker_history(self) -> pd.DataFrame:
 
