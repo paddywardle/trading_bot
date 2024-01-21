@@ -1,8 +1,4 @@
-from src.strategies.Strategy import Strategy
-
-from src.opportunities.OpportunityTickers import OpportunityTickers
-
-from src.indicators.TechnicalIndicators import TechnicalIndicators
+from src.backtest.BacktesterJob import BacktesterJob
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -15,43 +11,51 @@ class Backtester:
     def __init__(self, symbol:str, 
                  buy_signal:callable=None, 
                  sell_signal: callable=None, 
-                 buy_strategy: callable=None,
-                 sell_strategy: callable=None,
+                 buy_job: callable=None,
+                 sell_job: callable=None,
                  period:str="1y", 
                  interval:str="1d") -> None:
         
         self.symbol = symbol # in the future could make this so it get the top losers on each day
-
-        self.strategy = Strategy(buy_signal=buy_signal, sell_signal=sell_signal)
-        self.buy_strategy = self.default_buy or buy_strategy
-        self.sell_strategy = self.default_sell or sell_strategy
-
         self.period = period
         self.interval = interval
 
-        self.positions:dict[datetime, dict] = {}
+        self.trading_job = BacktesterJob(buy_job=buy_job,
+                                        sell_job=sell_job,
+                                        buy_signal=buy_signal,
+                                        sell_signal=sell_signal)
 
-    def default_buy(self, windows:list[str]=None, opportunity:pd.Series=None) -> bool:
+        self.positions:dict[str, dict] = {}
+        self.sales: dict[str, dict] = {}
+    
+    def sell_order(self, current_date:datetime, op:pd.Series):
 
-        indicators = TechnicalIndicators(windows=windows)
+        # assume we sell at the average of the day
+        sell_price = (op["Low"]+op["High"])/2
+        # sell all current positions of the stocks
 
-        op_stats = indicators.get_stats(opportunity)
+        for key, val in self.positions.items():
+                
+            self.sales[self.symbol + " " + current_date.strftime('%Y-%m-%d')] = {
+                "buy_date": val["buy_date"],
+                "sell_date": current_date,
+                "qty": key["qty"],
+                "buy_price": val["buy_price"],
+                "sell_price": sell_price,
+                "price_difference_per_share": (sell_price - val["buy_price"]),
+                "position_profit_loss": (sell_price - val["buy_price"]) * key["qty"]
+            }
 
-        sma = op_stats["sma14"].iloc[-2]
-        close = op_stats["Close"].iloc[-2]
-
-        return self.strategy.buy_signal(sma=sma, prev_close=close)
-
-    def default_sell(self, windows:list[str]=None, opportunity:pd.Series=None) -> bool:
-         
-        indicators = TechnicalIndicators(windows=windows)
-
-        op_stats = indicators.get_stats(opportunity)
-
-        sma = op_stats["sma14"].iloc[-2]
-        close = op_stats["Close"].iloc[-2]
-
-        return self.strategy.sell_signal(sma=sma, prev_close=close)
+            self.positions.pop(key, None)
+    
+    def buy_order(self, current_date:datetime, op:pd.Series):
+        
+        # assume we buy at the average price of the day
+        self.positions[self.symbol + " " + current_date.strftime('%Y-%m-%d')] = {
+            "buy_date": current_date,
+            "buy_price": (op["Low"].iloc[-1]+op["High"].iloc[-1])/2,
+            "qty": 1
+        }
 
     def run(self, start_date:datetime=None, end_date:datetime=None):
 
@@ -65,25 +69,19 @@ class Backtester:
 
                 op = ticker.history(start=current_start_date, end=current_date+timedelta(days=1), interval=self.interval)
 
-                buy_bool = self.buy_strategy(opportunity=op)
-            
-                if buy_bool:
-                    self.positions[current_date] = {
-                        "buy_price": (op["Low"][-1]+op["High"][-1])/2,
-                        "qty": 1
-                    }
+                buy_bool = self.trading_job.buy_job(opportunity=op)
 
-                sell_bool = self.sell_strategy(opportunity=op)
+                if buy_bool:
+                    self.buy_order(current_date=current_date, op=op.iloc[-1,:])
+
+                sell_bool = self.trading_job.sell_job(opportunity=op)
 
                 if sell_bool:
-                    pass
-                    # sell all in positions and add to returns object
-
-                # assume you buy at the average of high and low
-                # add a day to the current date
+                    self.sell_order(current_date=current_date, op=op.iloc[-1,:])
 
                 current_date += timedelta(days=1)
-                break
+
+            # then have an object that take the current positions and the sell orders at the end of the sim and calculates the metrics
 
             # needs to calculate metrics
         
