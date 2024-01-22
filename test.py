@@ -1,10 +1,11 @@
 from src.backtest.Backtester import Backtester
+import yfinance as yf
 
 from datetime import datetime
 
 if __name__ == "__main__":
 
-    back = Backtester(symbol="AAPL")
+    back = Backtester(symbols=["AAPL"])
     
     start_date = datetime(2023,11,1)
     end_date = datetime(2023, 12, 1)
