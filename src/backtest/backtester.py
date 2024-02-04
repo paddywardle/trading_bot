@@ -14,7 +14,8 @@ class Backtester:
                  buy_job: callable=None,
                  sell_job: callable=None,
                  period:str="1y", 
-                 interval:str="1d") -> None:
+                 interval:str="1d",
+                 current_positions:dict[str,dict]=None) -> None:
         
         self.symbols:list[str] = symbols # in the future could make this so it get the top losers on each day
         self.period:str = period
@@ -25,7 +26,7 @@ class Backtester:
                                         buy_signal=buy_signal,
                                         sell_signal=sell_signal)
 
-        self.positions:dict[str, dict] = {}
+        self.positions:dict[str, dict] = current_positions or {} # if we have current positions at the start
         self.sales: dict[str, dict] = {}
         self.ticker_data = None
     
@@ -122,4 +123,3 @@ class Backtester:
         # calculate backtesting stats
         #with ThreadPoolExecutor() as executor:
         #executor.map(get_stats, ticker_list) https://stackoverflow.com/questions/71161902/get-info-on-multiple-stock-tickers-quickly-using-yfinance
-                
